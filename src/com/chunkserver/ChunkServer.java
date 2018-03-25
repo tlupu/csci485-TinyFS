@@ -1,10 +1,12 @@
 package com.chunkserver;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -23,6 +25,8 @@ public class ChunkServer implements ChunkServerInterface {
 	public static long counter;
 	ServerSocket serverSocket;
 	Socket clientSocket;
+	DataInputStream is;
+    PrintStream os;
 
 	/**
 	 * Initialize the chunk server
@@ -33,8 +37,9 @@ public class ChunkServer implements ChunkServerInterface {
 //		System.out.println("It does nothing for now.\n");
 		
 		Socket clientSocket = null;
+		// Try to open a server socket on port 9898
 		try {
-			serverSocket = new ServerSocket(7777);
+			serverSocket = new ServerSocket(9898);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -42,6 +47,17 @@ public class ChunkServer implements ChunkServerInterface {
 		
 		try {
 			clientSocket = serverSocket.accept();
+			is = new DataInputStream(clientSocket.getInputStream());
+			os = new PrintStream(clientSocket.getOutputStream());
+			
+			/* TODO: move this code where you want to be receiving data */
+			String line;
+			while (true) {
+				// note: readLine() is deprecated
+				line = is.readUTF();
+				os.println(line); 
+			}
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
