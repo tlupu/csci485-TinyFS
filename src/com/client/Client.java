@@ -1,5 +1,9 @@
 package com.client;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import com.chunkserver.ChunkServer;
 import com.interfaces.ClientInterface;
 
@@ -11,13 +15,27 @@ import com.interfaces.ClientInterface;
  */
 public class Client implements ClientInterface {
 	public static ChunkServer cs = new ChunkServer();
-
+	Socket clientSocket;
+	
 	/**
 	 * Initialize the client
 	 */
 	public Client() {
 		if (cs == null)
+		{
 			cs = new ChunkServer();
+		}
+		
+		try {
+			clientSocket = new Socket("Teodora’s MacBook Pro", 7777);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
 	}
 
 	/**

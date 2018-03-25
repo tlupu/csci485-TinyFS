@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import com.interfaces.ChunkServerInterface;
 
@@ -19,6 +21,8 @@ public class ChunkServer implements ChunkServerInterface {
 	// /Users/teodoralupu/Desktop/TinyFS-2
 	final static String filePath = "/Users/teodoralupu/Desktop/TinyFS-2/Chunks"; // or C:\\newfile.txt
 	public static long counter;
+	ServerSocket serverSocket;
+	Socket clientSocket;
 
 	/**
 	 * Initialize the chunk server
@@ -27,6 +31,21 @@ public class ChunkServer implements ChunkServerInterface {
 //		System.out.println(
 //				"Constructor of ChunkServer is invoked:  Part 1 of TinyFS must implement the body of this method.");
 //		System.out.println("It does nothing for now.\n");
+		
+		Socket clientSocket = null;
+		try {
+			serverSocket = new ServerSocket(7777);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			clientSocket = serverSocket.accept();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		/* initialize the counter that keeps track of the chunkhandle 
 		   counter should start from the number of files that already exist */
