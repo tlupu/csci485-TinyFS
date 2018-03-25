@@ -16,11 +16,11 @@ import com.interfaces.ClientInterface;
  *
  */
 public class Client implements ClientInterface {
-	public static ChunkServer cs = new ChunkServer();
+	public static ChunkServer cs = null;
 	Socket clientSocket;
 	DataOutputStream os;
     DataInputStream is;
-    String hostname = "Teodora’s MacBook Pro";
+    String hostname = "localhost";
 	
 	/**
 	 * Initialize the client
@@ -29,13 +29,16 @@ public class Client implements ClientInterface {
 		if (cs == null)
 		{
 			cs = new ChunkServer();
+			System.out.println("after new chunkserver");
 		}
 		
-		// Try to open a socket on port 25
+		// Try to open a socket on port 9898
 		try {
-			clientSocket = new Socket(hostname, 25);
+			clientSocket = new Socket(hostname, 9898);
+			System.out.println("initialized client");
 			os = new DataOutputStream(clientSocket.getOutputStream());
             is = new DataInputStream(clientSocket.getInputStream());
+            System.out.println("initialized os and is");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Couldn't find host: " + hostname);
@@ -49,6 +52,7 @@ public class Client implements ClientInterface {
 		/* TODO: move this code where you want to write some data to the socket opened on port 25*/
 		if (clientSocket != null && os != null && is != null)
 		{
+			System.out.println("entered the writing bit");
 			try {
 				os.writeBytes("hello \n");
 				
@@ -59,7 +63,7 @@ public class Client implements ClientInterface {
 				while ((responseLine = is.readUTF()) != null)
 				{
 					System.out.println("Server: " + responseLine);
-					if (responseLine.indexOf("Ok") != -1)
+					if (responseLine.indexOf("ok") != -1)
 					{
 						break;
 					}

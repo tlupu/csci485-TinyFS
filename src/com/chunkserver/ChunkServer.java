@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.nio.channels.IllegalBlockingModeException;
 
 import com.interfaces.ChunkServerInterface;
 
@@ -40,6 +42,7 @@ public class ChunkServer implements ChunkServerInterface {
 		// Try to open a server socket on port 9898
 		try {
 			serverSocket = new ServerSocket(9898);
+			System.out.println("initialized server socket");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -47,6 +50,7 @@ public class ChunkServer implements ChunkServerInterface {
 		
 		try {
 			clientSocket = serverSocket.accept();
+			System.out.println("accepted server/client connection");
 			is = new DataInputStream(clientSocket.getInputStream());
 			os = new PrintStream(clientSocket.getOutputStream());
 			
@@ -60,6 +64,12 @@ public class ChunkServer implements ChunkServerInterface {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			System.out.println("SecurityException: if a security manager exists and its checkAccept method doesn't allow the operation");
+			e.printStackTrace();
+		} catch (IllegalBlockingModeException e) {
+			System.out.println("IllegalBlockingModeException: if this socket has an associated channel, the channel is in non-blocking mode, and there is no connection ready to be accepted");
 			e.printStackTrace();
 		}
 		
