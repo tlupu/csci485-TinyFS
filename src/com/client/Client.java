@@ -26,15 +26,15 @@ public class Client implements ClientInterface {
 	 * Initialize the client
 	 */
 	public Client() {
-		if (cs == null)
-		{
-			cs = new ChunkServer();
-			System.out.println("after new chunkserver");
-		}
+//		if (cs == null)
+//		{
+//			cs = new ChunkServer();
+//			System.out.println("after new chunkserver");
+//		}
 		
 		// Try to open a socket on port 9898
 		try {
-			clientSocket = new Socket(hostname, 9898);
+			clientSocket = new Socket(hostname, 9893);
 			System.out.println("initialized client");
 			os = new DataOutputStream(clientSocket.getOutputStream());
             is = new DataInputStream(clientSocket.getInputStream());

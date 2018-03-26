@@ -41,7 +41,7 @@ public class ChunkServer implements ChunkServerInterface {
 		Socket clientSocket = null;
 		// Try to open a server socket on port 9898
 		try {
-			serverSocket = new ServerSocket(9898);
+			serverSocket = new ServerSocket(9893);
 			System.out.println("initialized server socket");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -170,5 +170,11 @@ public class ChunkServer implements ChunkServerInterface {
 		}
 		
 		return fileContent;
+	}
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ChunkServer chunkServer = new ChunkServer();
+		System.out.println("in main of server");
 	}
 }
