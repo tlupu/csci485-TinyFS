@@ -35,10 +35,8 @@ public class UnitTest1 {
 		}
 		
 		boolean isSuccess = false;
-		System.out.println("before creating a client");
 		// Create the chunk and store its handle
 		Client client = new Client();
-		System.out.println("after creating a client");
 		handle = client.initializeChunk();
 		if (handle == null) {
 			System.out.println("Unit test 1 result: fail!");

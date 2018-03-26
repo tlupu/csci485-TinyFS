@@ -1,8 +1,10 @@
 package com.client;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -56,11 +58,11 @@ public class Client implements ClientInterface {
 			try {
 				os.writeBytes("hello \n");
 				
-				
 				/* keep on reading from/to the socket till we receive the "Ok" from client,
 				 once we received that then we want to break. */
 				String responseLine;
-				while ((responseLine = is.readUTF()) != null)
+				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+				while ((responseLine = in.readLine()) != null)
 				{
 					System.out.println("Server: " + responseLine);
 					if (responseLine.indexOf("ok") != -1)
