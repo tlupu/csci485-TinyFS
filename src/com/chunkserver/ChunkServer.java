@@ -225,6 +225,33 @@ public class ChunkServer implements ChunkServerInterface {
 		try {
 			// create FileInputStream object
 			fin = new FileInputStream(myFile);
+			fileContent = new byte[(int)myFile.length()];			
+			// Reads up to certain bytes of data from this input stream into an array of bytes.
+			fin.read(fileContent);
+		}
+		catch (FileNotFoundException e) {
+			System.out.println("File not found" + e);
+		}
+		catch (IOException ioe) {
+			System.out.println("Exception while reading file " + ioe);
+		}
+		
+		return fileContent;
+	}
+	
+	public void newGetChunk(String ChunkHandle, int offset, int NumberOfBytes) {
+//		System.out.println("readChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
+//		System.out.println("Returns null for now.\n");
+		
+		// initialize a binary file with the counter as the filename
+		String fPath = filePath + "/" + ChunkHandle + ".bin";
+		File myFile = new File(fPath);
+
+		FileInputStream fin = null;
+		byte fileContent[] = null;
+		try {
+			// create FileInputStream object
+			fin = new FileInputStream(myFile);
 
 			fileContent = new byte[(int)myFile.length()];
 			
@@ -238,7 +265,15 @@ public class ChunkServer implements ChunkServerInterface {
 			System.out.println("Exception while reading file " + ioe);
 		}
 		
-		return fileContent;
+//		return fileContent;
+		
+		/* this is the part where you write the number of bytes in the file in the first byte and then write the array */
+		try {
+			os.write(fileContent);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) {
