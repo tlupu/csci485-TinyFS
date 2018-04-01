@@ -140,7 +140,41 @@ public class Client implements ClientInterface {
 			System.out.println("The chunk read should be within the range of the file, invalide chunk read!");
 			return null;
 		}
-		return cs.getChunk(ChunkHandle, offset, NumberOfBytes);
+		
+		/* in a while loop, get the number of chunks from the server, then read the chunks */
+		try {
+			boolean keepReading = true;
+			int numChunks = 0;
+			// keep reading from the input stream until you get the chunkHandle
+			while (keepReading)
+			{
+				numChunks = is.readInt();
+				if (numChunks > 0)
+				{
+					keepReading = false;
+				}
+			}
+			
+			keepReading = true;
+			byte fileContent[] = null;
+			while (keepReading)
+			{
+				is.read(fileContent, offset, numChunks);
+				if (fileContent != null && fileContent.length == numChunks)
+				{
+					return fileContent;
+				}
+			}
+			
+			// close input stream
+			is.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// return cs.getChunk(ChunkHandle, offset, NumberOfBytes);
+		return null;
 	}
 
 }

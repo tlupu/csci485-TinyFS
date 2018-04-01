@@ -252,9 +252,7 @@ public class ChunkServer implements ChunkServerInterface {
 		try {
 			// create FileInputStream object
 			fin = new FileInputStream(myFile);
-
 			fileContent = new byte[(int)myFile.length()];
-			
 			// Reads up to certain bytes of data from this input stream into an array of bytes.
 			fin.read(fileContent);
 		}
@@ -265,11 +263,14 @@ public class ChunkServer implements ChunkServerInterface {
 			System.out.println("Exception while reading file " + ioe);
 		}
 		
-//		return fileContent;
-		
 		/* this is the part where you write the number of bytes in the file in the first byte and then write the array */
 		try {
+			// first write the number of bytes
+			os.write(fileContent.length);
+			os.flush();
+			// then write the bytes array
 			os.write(fileContent);
+			os.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
