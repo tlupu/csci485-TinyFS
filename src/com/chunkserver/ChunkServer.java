@@ -2,6 +2,7 @@ package com.chunkserver;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +32,8 @@ public class ChunkServer implements ChunkServerInterface {
 	ServerSocket serverSocket;
 	Socket clientSocket;
 	DataInputStream is;
-    PrintStream os;
+    DataOutputStream os;
+    PrintStream ps;
 
 	/**
 	 * Initialize the chunk server
@@ -55,7 +57,8 @@ public class ChunkServer implements ChunkServerInterface {
 			clientSocket = serverSocket.accept();
 			System.out.println("accepted server/client connection");
 			is = new DataInputStream(clientSocket.getInputStream());
-			os = new PrintStream(clientSocket.getOutputStream());
+			os = new DataOutputStream(clientSocket.getOutputStream());
+			ps = new PrintStream(clientSocket.getOutputStream());
 			
 			/* TODO: move this code where you want to be receiving data */
 			String line;
@@ -63,7 +66,7 @@ public class ChunkServer implements ChunkServerInterface {
 			while (true) {
 				// note: readLine() is deprecated
 				line = in.readLine();
-				os.println(line); 
+				ps.println(line); 
 			}
 			
 		} catch (IOException e) {
@@ -99,12 +102,33 @@ public class ChunkServer implements ChunkServerInterface {
 //		System.out.println("createChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
 //		System.out.println("Returns null for now.\n");
 		
+		// send the handle through the output stream
 		// increment the counter
 		counter++;
-		String counterStr = Long.toString(counter);
+		String chunkHandle = Long.toString(counter);
 		
 		// return the counter
-		return counterStr;
+		return chunkHandle;
+	}
+	
+	public void newInitializeChunk() {
+//		System.out.println("createChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
+//		System.out.println("Returns null for now.\n");
+		
+		// send the handle through the output stream
+		try {
+			// increment the counter
+			counter++;
+			String chunkHandle = Long.toString(counter);
+			// write chunk handle to output stream
+			os.writeChars(chunkHandle);
+			// flush the stream
+			os.flush();
+			System.out.println("\nSent chunkHandle: " + chunkHandle);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -143,6 +167,47 @@ public class ChunkServer implements ChunkServerInterface {
 		
 		return false;
 	}
+	
+	public void newPutChunk(String ChunkHandle, byte[] payload, int offset) {
+//		System.out.println("putChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
+//		System.out.println("Returns false for now.\n");
+		
+		String counterStr = Long.toString(counter);
+		// initialize a binary file with the counter as the filename
+		String fPath = filePath + "/" + counterStr + ".bin";
+		File myFile = new File(fPath);
+		
+		
+//		System.out.println("The chunk size is greater than 4KB!");
+//		return false;
+		try {
+			if (payload.length > ChunkServer.ChunkSize) {
+				os.writeBoolean(false);
+				os.flush();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(myFile);
+			fos.write(payload, offset, payload.length);
+			fos.close();
+			
+//			return true;
+			os.writeBoolean(true);
+			os.flush();
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * read the chunk at the specific offset
@@ -179,5 +244,15 @@ public class ChunkServer implements ChunkServerInterface {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ChunkServer chunkServer = new ChunkServer();
+		
+		/* clean up */
+		try {
+			chunkServer.os.close();
+			chunkServer.is.close();
+			chunkServer.clientSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

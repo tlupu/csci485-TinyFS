@@ -38,9 +38,12 @@ public class Client implements ClientInterface {
 		try {
 			clientSocket = new Socket(hostname, 9893);
 			System.out.println("initialized client");
+			
+			// open input and output streams
 			os = new DataOutputStream(clientSocket.getOutputStream());
             is = new DataInputStream(clientSocket.getInputStream());
             System.out.println("initialized os and is");
+            
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Couldn't find host: " + hostname);
@@ -51,13 +54,11 @@ public class Client implements ClientInterface {
 			e.printStackTrace();
 		}
 		
-		/* TODO: move this code where you want to write some data to the socket opened on port 25*/
+		/* TODO: move this code where you want to write some data to the socket*/
 		if (clientSocket != null && os != null && is != null)
 		{
 			System.out.println("entered the writing bit");
 			try {
-				os.writeBytes("hello \n");
-				
 				/* keep on reading from/to the socket till we receive the "Ok" from client,
 				 once we received that then we want to break. */
 				String responseLine;
@@ -87,7 +88,23 @@ public class Client implements ClientInterface {
 	 * Create a chunk at the chunk server from the client side.
 	 */
 	public String initializeChunk() {
-		return cs.initializeChunk();
+		
+		try {
+			String line;
+			// keep reading from the input stream until you get the chunkHandle
+			while ( (line = is.readUTF()) != null )
+			{
+				// this should capture the chunk handle
+				return line;
+			}
+			// close input stream
+			is.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "";
 	}
 
 	/**
@@ -95,10 +112,24 @@ public class Client implements ClientInterface {
 	 */
 	public boolean putChunk(String ChunkHandle, byte[] payload, int offset) {
 		if (offset + payload.length > ChunkServer.ChunkSize) {
-			System.out.println("The chunk write should be within the range of the file, invalide chunk write!");
+			System.out.println("The chunk write should be within the range of the file, invalid chunk write!");
 			return false;
 		}
-		return cs.putChunk(ChunkHandle, payload, offset);
+		
+		try {
+			boolean response;
+			while ( (response = is.readBoolean()) )
+			{
+				return response;
+			}
+			is.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
+//		return cs.putChunk(ChunkHandle, payload, offset);
 	}
 
 	/**
