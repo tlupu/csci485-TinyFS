@@ -95,10 +95,13 @@ public class Client implements ClientInterface {
 		
 		// first send a request to the server that you want to initialize a chunk
 		try {
-			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os));
+//			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os));
 			if (clientSocket != null && os != null && is != null) {
+				
 				System.out.println("client is ready in initializeChunk");
-				out.write("i");
+				
+				os.writeChar('i');
+				os.close();
 				System.out.println("client requested server to initialize chunk");
 			}
 		} catch (IOException e1) {

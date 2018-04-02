@@ -34,6 +34,7 @@ public class ChunkServer implements ChunkServerInterface {
 	DataInputStream is;
     DataOutputStream os;
     PrintStream ps;
+  
 
 	/**
 	 * Initialize the chunk server
@@ -48,32 +49,37 @@ public class ChunkServer implements ChunkServerInterface {
 		try {
 			serverSocket = new ServerSocket(9893);
 			System.out.println("initialized server socket");
+			clientSocket = serverSocket.accept();
+			System.out.println("accepted server/client connection");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		try {
-			clientSocket = serverSocket.accept();
-			System.out.println("accepted server/client connection");
 			is = new DataInputStream(clientSocket.getInputStream());
 			os = new DataOutputStream(clientSocket.getOutputStream());
 			ps = new PrintStream(clientSocket.getOutputStream());
 			
 			/* TODO: move this code where you want to be receiving data */
-			String line;
+			char line = is.readChar();
+			if (line == 'i')
+			{
+				System.out.println("server read request to initialize chunk");
+				newInitializeChunk();
+			}
 //			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			
-			BufferedReader in = new BufferedReader(new InputStreamReader(is));
-			while ((line = in.readLine()) != null) {
-				line = in.readLine();
-				System.out.println("server read line: " + line);
-				
-				if (line == "i")
-				{
-					System.out.println("server read request to initialize chunk");
-					newInitializeChunk();
-				}
+//			BufferedReader in = new BufferedReader(new InputStreamReader(is));
+//			while ((line = is.readChar()) != null) {
+////				line = in.readLine();
+//				System.out.println("server read line: " + line);
+//				
+//				if (line == "i")
+//				{
+//					System.out.println("server read request to initialize chunk");
+//					newInitializeChunk();
+//				}
 //				else if (line == "p")
 //				{
 //					newPutChunk(String ChunkHandle, byte[] payload, int offset);
@@ -83,8 +89,8 @@ public class ChunkServer implements ChunkServerInterface {
 //					newPutChunk(String ChunkHandle, byte[] payload, int offset);
 //				}
 				
-				ps.println(line); 
-			}
+//				ps.println(line); 
+//			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
