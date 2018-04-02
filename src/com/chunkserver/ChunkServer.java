@@ -75,8 +75,8 @@ public class ChunkServer implements ChunkServerInterface {
 			ps = new PrintStream(clientSocket.getOutputStream());
 			
 			/* TODO: move this code where you want to be receiving data */
-//			while (true)
-//			{
+			while (true)
+			{
 				char line = is.readChar();
 				if (line == 'i')
 				{
@@ -85,9 +85,10 @@ public class ChunkServer implements ChunkServerInterface {
 				}
 				else if (line == 'p')
 				{
+					System.out.println("server read request to put chunk");
 					newPutChunk("1", null, 0);
 				}
-//			}
+			}
 			
 			
 //			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -153,11 +154,10 @@ public class ChunkServer implements ChunkServerInterface {
 			counter++;
 			String chunkHandle = Long.toString(counter);
 			// write chunk handle to output stream
-			os.writeChars(chunkHandle);
-			System.out.println("server wrote chunk handle to client");
+			os.writeUTF(chunkHandle);
 			// flush the stream
 			os.flush();
-			System.out.println("\nSent chunkHandle: " + chunkHandle);
+			System.out.println("Sent chunkHandle: " + chunkHandle);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -216,6 +216,7 @@ public class ChunkServer implements ChunkServerInterface {
 		try {
 			if (payload.length > ChunkServer.ChunkSize) {
 				os.writeBoolean(false);
+				System.out.println("server wrote false");
 				os.flush();
 			}
 		} catch (IOException e) {
@@ -231,6 +232,7 @@ public class ChunkServer implements ChunkServerInterface {
 			
 //			return true;
 			os.writeBoolean(true);
+			System.out.println("server wrote true");
 			os.flush();
 			
 		} catch (FileNotFoundException e) {
@@ -315,13 +317,13 @@ public class ChunkServer implements ChunkServerInterface {
 		ChunkServer chunkServer = new ChunkServer();
 		
 		/* clean up */
-		try {
-			chunkServer.os.close();
-			chunkServer.is.close();
+//		try {
+//			chunkServer.os.close();
+//			chunkServer.is.close();
 //			chunkServer.clientSocket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 }

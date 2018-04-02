@@ -96,21 +96,18 @@ public class Client implements ClientInterface {
 		// first send a request to the server that you want to initialize a chunk
 		try {
 			if (clientSocket != null && os != null && is != null) {
-				
-				System.out.println("client is ready in initializeChunk");
 				os.writeChar('i');
 				System.out.println("client requested server to initialize chunk");
 			}
 			
-			// read response from server
 			String responseLine = is.readUTF();
 			// this should capture the chunk handle
 			System.out.println("client read something from server in intializeChunk: " + responseLine);
 			
-			os.close();
-			is.close();
+//			os.close();
+//			is.close();
 			
-			return responseLine;
+			return responseLine;	
 			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -133,9 +130,8 @@ public class Client implements ClientInterface {
 
 		try {
 			if (clientSocket != null && os != null && is != null) {
-				System.out.println("client is ready in putChunk");
 				os.writeChar('p');
-
+				System.out.println("client requested server to putChunk");
 			}
 			
 			// read the response from the server
@@ -146,7 +142,6 @@ public class Client implements ClientInterface {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("client requested server to putChunk");
 		
 		return false;
 //		return cs.putChunk(ChunkHandle, payload, offset);
