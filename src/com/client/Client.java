@@ -104,9 +104,6 @@ public class Client implements ClientInterface {
 			// this should capture the chunk handle
 			System.out.println("client read something from server in intializeChunk: " + responseLine);
 			
-//			os.close();
-//			is.close();
-			
 			return responseLine;	
 			
 		} catch (IOException e1) {
@@ -131,11 +128,17 @@ public class Client implements ClientInterface {
 		try {
 			if (clientSocket != null && os != null && is != null) {
 				os.writeChar('p');
+				// send all the data to the server
+				os.writeUTF(ChunkHandle);
+				os.writeInt(payload.length);
+				os.write(payload);
+				os.writeInt(offset);
 				System.out.println("client requested server to putChunk");
 			}
 			
 			// read the response from the server
 			boolean response = is.readBoolean();
+			System.out.println("client read something from server in putChunk: " + response);
 			return response;
 			
 		} catch (IOException e) {

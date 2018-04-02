@@ -86,7 +86,13 @@ public class ChunkServer implements ChunkServerInterface {
 				else if (line == 'p')
 				{
 					System.out.println("server read request to put chunk");
-					newPutChunk("1", null, 0);
+					String ChunkHandle = is.readUTF();
+					int payloadSize = is.readInt();
+					byte[] buffer = new byte[payloadSize];
+					// read data into buffer
+					is.read(buffer);
+					int offset = is.readInt();
+					newPutChunk(ChunkHandle, buffer, offset);
 				}
 			}
 			
@@ -210,38 +216,26 @@ public class ChunkServer implements ChunkServerInterface {
 		String fPath = filePath + "/" + counterStr + ".bin";
 		File myFile = new File(fPath);
 		
-		
-//		System.out.println("The chunk size is greater than 4KB!");
-//		return false;
 		try {
 			if (payload.length > ChunkServer.ChunkSize) {
 				os.writeBoolean(false);
 				System.out.println("server wrote false");
 				os.flush();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		FileOutputStream fos;
-		try {
+			
+			FileOutputStream fos;
 			fos = new FileOutputStream(myFile);
 			fos.write(payload, offset, payload.length);
 			fos.close();
-			
-//			return true;
+
 			os.writeBoolean(true);
 			System.out.println("server wrote true");
 			os.flush();
 			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 	}
 
 	/**
@@ -317,13 +311,13 @@ public class ChunkServer implements ChunkServerInterface {
 		ChunkServer chunkServer = new ChunkServer();
 		
 		/* clean up */
-//		try {
-//			chunkServer.os.close();
-//			chunkServer.is.close();
-//			chunkServer.clientSocket.close();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			chunkServer.os.close();
+			chunkServer.is.close();
+			chunkServer.clientSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
