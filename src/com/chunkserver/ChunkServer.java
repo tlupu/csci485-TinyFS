@@ -62,10 +62,27 @@ public class ChunkServer implements ChunkServerInterface {
 			
 			/* TODO: move this code where you want to be receiving data */
 			String line;
-			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-			while (true) {
-				// note: readLine() is deprecated
+//			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(is));
+			while ((line = in.readLine()) != null) {
 				line = in.readLine();
+				System.out.println("server read line: " + line);
+				
+				if (line == "i")
+				{
+					System.out.println("server read request to initialize chunk");
+					newInitializeChunk();
+				}
+//				else if (line == "p")
+//				{
+//					newPutChunk(String ChunkHandle, byte[] payload, int offset);
+//				}
+//				else if (line == "g")
+//				{
+//					newPutChunk(String ChunkHandle, byte[] payload, int offset);
+//				}
+				
 				ps.println(line); 
 			}
 			
@@ -122,6 +139,7 @@ public class ChunkServer implements ChunkServerInterface {
 			String chunkHandle = Long.toString(counter);
 			// write chunk handle to output stream
 			os.writeChars(chunkHandle);
+			System.out.println("server wrote chunk handle to client");
 			// flush the stream
 			os.flush();
 			System.out.println("\nSent chunkHandle: " + chunkHandle);

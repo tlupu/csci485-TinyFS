@@ -1,10 +1,12 @@
 package com.client;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -55,47 +57,65 @@ public class Client implements ClientInterface {
 		}
 		
 		/* TODO: move this code where you want to write some data to the socket*/
-		if (clientSocket != null && os != null && is != null)
-		{
-			System.out.println("entered the writing bit");
-			try {
-				/* keep on reading from/to the socket till we receive the "Ok" from client,
-				 once we received that then we want to break. */
-				String responseLine;
-				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-				while ((responseLine = in.readLine()) != null)
-				{
-					System.out.println("Server: " + responseLine);
-					if (responseLine.indexOf("ok") != -1)
-					{
-						break;
-					}
-				}
-				
-				/* clean up */
-				os.close();
-				is.close();
-				clientSocket.close();
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-		}
+//		if (clientSocket != null && os != null && is != null)
+//		{
+//			System.out.println("entered the writing bit");
+//			
+//			try {
+//				/* keep on reading from/to the socket till we receive the "Ok" from client,
+//				 once we received that then we want to break. */
+//				String responseLine;
+//				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+//				while ((responseLine = in.readLine()) != null)
+//				{
+//					System.out.println("Server: " + responseLine);
+//					if (responseLine.indexOf("ok") != -1)
+//					{
+//						break;
+//					}
+//				}
+//				
+//				/* clean up */
+//				os.close();
+//				is.close();
+//				clientSocket.close();
+//				
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} 
+//		}
 	}
+	
 
 	/**
 	 * Create a chunk at the chunk server from the client side.
 	 */
 	public String initializeChunk() {
 		
+		// first send a request to the server that you want to initialize a chunk
 		try {
-			String line;
+			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os));
+			if (clientSocket != null && os != null && is != null) {
+				System.out.println("client is ready in initializeChunk");
+				out.write("i");
+				System.out.println("client requested server to initialize chunk");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		// read the response from the server
+		try {
+			String responseLine;
+			BufferedReader in = new BufferedReader(new InputStreamReader(is));
 			// keep reading from the input stream until you get the chunkHandle
-			while ( (line = is.readUTF()) != null )
+			while ((responseLine = in.readLine()) != null)
 			{
 				// this should capture the chunk handle
-				return line;
+				System.out.println("client read something from server in intializeChunk: " + responseLine);
+				return responseLine;
 			}
 			// close input stream
 			is.close();
@@ -105,6 +125,7 @@ public class Client implements ClientInterface {
 		}
 		
 		return "";
+//		return cs.initializeChunk();
 	}
 
 	/**
@@ -117,6 +138,7 @@ public class Client implements ClientInterface {
 		}
 		
 		try {
+			// read the response from the server
 			boolean response;
 			while ( (response = is.readBoolean()) )
 			{
