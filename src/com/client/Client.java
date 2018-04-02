@@ -22,20 +22,14 @@ import com.interfaces.ClientInterface;
 public class Client implements ClientInterface {
 	public static ChunkServer cs = null;
 	Socket clientSocket;
-	DataOutputStream os;
-    DataInputStream is;
+	public DataOutputStream os;
+    public DataInputStream is;
     String hostname = "localhost";
 	
 	/**
 	 * Initialize the client
 	 */
 	public Client() {
-//		if (cs == null)
-//		{
-//			cs = new ChunkServer();
-//			System.out.println("after new chunkserver");
-//		}
-		
 		// Try to open a socket on port 9898
 		try {
 			clientSocket = new Socket(hostname, 9893);
@@ -55,36 +49,7 @@ public class Client implements ClientInterface {
 			System.out.println("Could not get I/O for the connection to: " + hostname);
 			e.printStackTrace();
 		}
-		
-		/* TODO: move this code where you want to write some data to the socket*/
-//		if (clientSocket != null && os != null && is != null)
-//		{
-//			System.out.println("entered the writing bit");
-//			
-//			try {
-//				/* keep on reading from/to the socket till we receive the "Ok" from client,
-//				 once we received that then we want to break. */
-//				String responseLine;
-//				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-//				while ((responseLine = in.readLine()) != null)
-//				{
-//					System.out.println("Server: " + responseLine);
-//					if (responseLine.indexOf("ok") != -1)
-//					{
-//						break;
-//					}
-//				}
-//				
-//				/* clean up */
-//				os.close();
-//				is.close();
-//				clientSocket.close();
-//				
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} 
-//		}
+
 	}
 	
 
@@ -161,31 +126,23 @@ public class Client implements ClientInterface {
 		
 		/* in a while loop, get the number of chunks from the server, then read the chunks */
 		try {
-			boolean keepReading = true;
-			int numChunks = 0;
-			// keep reading from the input stream until you get the chunkHandle
-			while (keepReading)
+			if (clientSocket != null && os != null && is != null) 
 			{
-				numChunks = is.readInt();
-				if (numChunks > 0)
-				{
-					keepReading = false;
-				}
+				os.writeChar('g');
+				// send all the data to the server
+				os.writeUTF(ChunkHandle);
+				os.writeInt(offset);
+				os.writeInt(NumberOfBytes);
+				System.out.println("client requested server to putChunk");
 			}
+				
+			int numBytes = is.readInt();
+			System.out.println("numBytes read from the server: " + numBytes);
+			byte[] buffer = new byte[numBytes];
+			int bytesRead = is.read(buffer);
+			System.out.println("number of bytes actually read from the server: " + bytesRead);
+			return buffer;
 			
-			keepReading = true;
-			byte fileContent[] = null;
-			while (keepReading)
-			{
-				is.read(fileContent, offset, numChunks);
-				if (fileContent != null && fileContent.length == numChunks)
-				{
-					return fileContent;
-				}
-			}
-			
-			// close input stream
-			is.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

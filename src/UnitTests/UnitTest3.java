@@ -1,5 +1,6 @@
 package UnitTests;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import com.chunkserver.ChunkServer;
@@ -69,7 +70,6 @@ public class UnitTest3 {
 			}
 		}
 		System.out.println("Unit test 3 result: success!");
-
 	}
 
 }

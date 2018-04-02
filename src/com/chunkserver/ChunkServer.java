@@ -94,32 +94,15 @@ public class ChunkServer implements ChunkServerInterface {
 					int offset = is.readInt();
 					newPutChunk(ChunkHandle, buffer, offset);
 				}
+				else if (line == 'g')
+				{
+					System.out.println("server read request to get chunk");
+					String ChunkHandle = is.readUTF();
+					int offset = is.readInt();
+					int NumberOfBytes = is.readInt();
+					newGetChunk(ChunkHandle, offset, NumberOfBytes);
+				}
 			}
-			
-			
-//			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-			
-//			BufferedReader in = new BufferedReader(new InputStreamReader(is));
-//			while ((line = is.readChar()) != null) {
-////				line = in.readLine();
-//				System.out.println("server read line: " + line);
-//				
-//				if (line == "i")
-//				{
-//					System.out.println("server read request to initialize chunk");
-//					newInitializeChunk();
-//				}
-//				else if (line == "p")
-//				{
-//					newPutChunk(String ChunkHandle, byte[] payload, int offset);
-//				}
-//				else if (line == "g")
-//				{
-//					newPutChunk(String ChunkHandle, byte[] payload, int offset);
-//				}
-				
-//				ps.println(line); 
-//			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -283,26 +266,21 @@ public class ChunkServer implements ChunkServerInterface {
 			fin = new FileInputStream(myFile);
 			fileContent = new byte[(int)myFile.length()];
 			// Reads up to certain bytes of data from this input stream into an array of bytes.
-			fin.read(fileContent);
+			int numBytes = fin.read(fileContent);
+			System.out.println("numBytes in newGetChunk: " + numBytes);
+			/* this is the part where you write the number of bytes in the file in the first byte and then write the array */
+			// first write the number of bytes
+			os.writeInt(numBytes);
+			os.flush();
+			// then write the bytes array
+			os.write(fileContent);
+			os.flush();
 		}
 		catch (FileNotFoundException e) {
 			System.out.println("File not found" + e);
 		}
 		catch (IOException ioe) {
 			System.out.println("Exception while reading file " + ioe);
-		}
-		
-		/* this is the part where you write the number of bytes in the file in the first byte and then write the array */
-		try {
-			// first write the number of bytes
-			os.write(fileContent.length);
-			os.flush();
-			// then write the bytes array
-			os.write(fileContent);
-			os.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	
@@ -311,13 +289,13 @@ public class ChunkServer implements ChunkServerInterface {
 		ChunkServer chunkServer = new ChunkServer();
 		
 		/* clean up */
-		try {
-			chunkServer.os.close();
-			chunkServer.is.close();
-			chunkServer.clientSocket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			chunkServer.os.close();
+//			chunkServer.is.close();
+//			chunkServer.clientSocket.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 }
