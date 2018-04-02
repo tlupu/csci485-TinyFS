@@ -13,6 +13,8 @@ import com.client.Client;
  */
 
 public class UnitTest2 {
+	
+	static Client client = null;
 
 	/**
 	 * This unit test call unit test 1, read the chunk and check if every byte = "1"
@@ -21,7 +23,14 @@ public class UnitTest2 {
 	public static void main(String[] args) {
 		UnitTest1 ut1 = new UnitTest1();
 		ut1.test1();
-		Client client = new Client();
+		if (ut1.client != null)
+		{
+			client = ut1.client;
+		}
+		else
+		{
+			client = new Client();
+		}
 		String handle = ut1.handle;
 		byte[] ValInBytes = ByteBuffer.allocate(4).putInt(1).array();
 		byte[] data = new byte[ChunkServer.ChunkSize];

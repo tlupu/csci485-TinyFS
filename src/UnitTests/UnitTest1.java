@@ -12,6 +12,8 @@ import com.client.Client;
  *
  */
 public class UnitTest1 {
+	
+	static Client client = null;
 
 	/**
 	 * This unit test generates an array of 4K bytes where each byte = "1"
@@ -36,7 +38,11 @@ public class UnitTest1 {
 		
 		boolean isSuccess = false;
 		// Create the chunk and store its handle
-		Client client = new Client();
+		if (client == null)
+		{
+			client = new Client();
+		}
+		
 		handle = client.initializeChunk();
 		if (handle == null) {
 			System.out.println("Unit test 1 result: fail!");
