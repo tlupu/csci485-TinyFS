@@ -56,18 +56,40 @@ public class ChunkServer implements ChunkServerInterface {
 			e.printStackTrace();
 		}
 		
+		/* initialize the counter that keeps track of the chunkhandle 
+		   counter should start from the number of files that already exist */
+		File directory = new File(filePath);
+		
+		if(directory.list() != null && directory.list().length > 0)
+		{
+			counter = directory.list().length;
+		}
+		else
+		{
+			counter = 0;
+		}
+		
 		try {
 			is = new DataInputStream(clientSocket.getInputStream());
 			os = new DataOutputStream(clientSocket.getOutputStream());
 			ps = new PrintStream(clientSocket.getOutputStream());
 			
 			/* TODO: move this code where you want to be receiving data */
-			char line = is.readChar();
-			if (line == 'i')
-			{
-				System.out.println("server read request to initialize chunk");
-				newInitializeChunk();
-			}
+//			while (true)
+//			{
+				char line = is.readChar();
+				if (line == 'i')
+				{
+					System.out.println("server read request to initialize chunk");
+					newInitializeChunk();
+				}
+				else if (line == 'p')
+				{
+					newPutChunk("1", null, 0);
+				}
+//			}
+			
+			
 //			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			
 //			BufferedReader in = new BufferedReader(new InputStreamReader(is));
@@ -101,19 +123,6 @@ public class ChunkServer implements ChunkServerInterface {
 		} catch (IllegalBlockingModeException e) {
 			System.out.println("IllegalBlockingModeException: if this socket has an associated channel, the channel is in non-blocking mode, and there is no connection ready to be accepted");
 			e.printStackTrace();
-		}
-		
-		/* initialize the counter that keeps track of the chunkhandle 
-		   counter should start from the number of files that already exist */
-		File directory = new File(filePath);
-		
-		if(directory.list() != null && directory.list().length > 0)
-		{
-			counter = directory.list().length;
-		}
-		else
-		{
-			counter = 0;
 		}
 	}
 
@@ -309,7 +318,7 @@ public class ChunkServer implements ChunkServerInterface {
 		try {
 			chunkServer.os.close();
 			chunkServer.is.close();
-			chunkServer.clientSocket.close();
+//			chunkServer.clientSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

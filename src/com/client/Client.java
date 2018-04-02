@@ -95,37 +95,28 @@ public class Client implements ClientInterface {
 		
 		// first send a request to the server that you want to initialize a chunk
 		try {
-//			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os));
 			if (clientSocket != null && os != null && is != null) {
 				
 				System.out.println("client is ready in initializeChunk");
-				
 				os.writeChar('i');
-				os.close();
 				System.out.println("client requested server to initialize chunk");
 			}
+			
+			// read response from server
+			String responseLine = is.readUTF();
+			// this should capture the chunk handle
+			System.out.println("client read something from server in intializeChunk: " + responseLine);
+			
+			os.close();
+			is.close();
+			
+			return responseLine;
+			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
+		} 
 		
-		// read the response from the server
-		try {
-			String responseLine;
-			BufferedReader in = new BufferedReader(new InputStreamReader(is));
-			// keep reading from the input stream until you get the chunkHandle
-			while ((responseLine = in.readLine()) != null)
-			{
-				// this should capture the chunk handle
-				System.out.println("client read something from server in intializeChunk: " + responseLine);
-				return responseLine;
-			}
-			// close input stream
-			is.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		return "";
 //		return cs.initializeChunk();
@@ -139,19 +130,23 @@ public class Client implements ClientInterface {
 			System.out.println("The chunk write should be within the range of the file, invalid chunk write!");
 			return false;
 		}
-		
+
 		try {
-			// read the response from the server
-			boolean response;
-			while ( (response = is.readBoolean()) )
-			{
-				return response;
+			if (clientSocket != null && os != null && is != null) {
+				System.out.println("client is ready in putChunk");
+				os.writeChar('p');
+
 			}
-			is.close();
+			
+			// read the response from the server
+			boolean response = is.readBoolean();
+			return response;
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("client requested server to putChunk");
 		
 		return false;
 //		return cs.putChunk(ChunkHandle, payload, offset);
