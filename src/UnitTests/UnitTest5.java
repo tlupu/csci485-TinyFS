@@ -16,6 +16,8 @@ import com.client.Client;
  */
 
 public class UnitTest5 {
+	
+	static Client client = null;
 
 	/**
 	 * This unit test uses a file (e.g., an image) and stores it as a sequence of
@@ -38,8 +40,16 @@ public class UnitTest5 {
 		}
 		int lastChunkSize = (int) (fin.length() % ChunkServer.ChunkSize);
 		// create and write chunk(s) of the file
-		Client client = new Client();
+//		Client client = new Client();
 		TestReadAndWrite trw = new TestReadAndWrite();
+		if (trw.client == null)
+		{
+			client = trw.client;
+		}
+		else
+		{
+			client = new Client();
+		}
 		MyChunks = trw.createFile(fin);
 		File fout = new File(outputFile);
 		FileOutputStream output = new FileOutputStream(fout);
