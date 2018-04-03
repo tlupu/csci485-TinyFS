@@ -18,7 +18,7 @@ import com.client.Client;
 public class UnitTest5 {
 	
 	static Client client = null;
-
+	
 	/**
 	 * This unit test uses a file (e.g., an image) and stores it as a sequence of
 	 * chunks, then reads the chunks and stores them in a file at the client side.
@@ -42,7 +42,7 @@ public class UnitTest5 {
 		// create and write chunk(s) of the file
 //		Client client = new Client();
 		TestReadAndWrite trw = new TestReadAndWrite();
-		if (trw.client == null)
+		if (trw.client != null)
 		{
 			client = trw.client;
 		}

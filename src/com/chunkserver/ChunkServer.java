@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -77,7 +78,12 @@ public class ChunkServer implements ChunkServerInterface {
 			/* TODO: move this code where you want to be receiving data */
 			while (true)
 			{
-				char line = is.readChar();
+				char line = 'a';
+				if (is.available() != 0)
+				{
+					line = is.readChar();
+				}
+				
 				if (line == 'i')
 				{
 					System.out.println("server read request to initialize chunk");
@@ -197,7 +203,7 @@ public class ChunkServer implements ChunkServerInterface {
 		String counterStr = Long.toString(counter);
 		// initialize a binary file with the counter as the filename
 		String fPath = filePath + "/" + counterStr + ".bin";
-		File myFile = new File(fPath);
+//		File myFile = new File(fPath);
 		
 		try {
 			if (payload.length > ChunkServer.ChunkSize) {
@@ -206,10 +212,15 @@ public class ChunkServer implements ChunkServerInterface {
 				os.flush();
 			}
 			
-			FileOutputStream fos;
-			fos = new FileOutputStream(myFile);
-			fos.write(payload, offset, payload.length);
-			fos.close();
+//			FileOutputStream fos;
+//			fos = new FileOutputStream(myFile);
+//			fos.write(payload, offset, payload.length);
+//			fos.close();
+			
+			RandomAccessFile raf = new RandomAccessFile(fPath, "rw");
+			raf.seek(offset);
+			raf.write(payload, 0, payload.length);
+			raf.close();
 
 			os.writeBoolean(true);
 			System.out.println("server wrote true");
