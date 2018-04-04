@@ -41,10 +41,6 @@ public class ChunkServer implements ChunkServerInterface {
 	 * Initialize the chunk server
 	 */
 	public ChunkServer() {
-//		System.out.println(
-//				"Constructor of ChunkServer is invoked:  Part 1 of TinyFS must implement the body of this method.");
-//		System.out.println("It does nothing for now.\n");
-		
 		/* initialize the counter that keeps track of the chunkhandle 
 		   counter should start from the number of files that already exist */
 		File directory = new File(filePath);
@@ -62,41 +58,38 @@ public class ChunkServer implements ChunkServerInterface {
 		// Try to open a server socket on port 9898
 		try {
 			serverSocket = new ServerSocket(9893);
-			System.out.println("initialized server socket");
+			System.out.println("Initialized server socket");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		boolean done = false;
-		
-		while (!done)
+		while (true)
 		{
 			try {
 				clientSocket = serverSocket.accept();
-				System.out.println("accepted server/client connection");
-				
+				System.out.println("Accepted server socket");
 				is = new DataInputStream(clientSocket.getInputStream());
 				os = new DataOutputStream(clientSocket.getOutputStream());
 				ps = new PrintStream(clientSocket.getOutputStream());
-				
-				/* TODO: move this code where you want to be receiving data */
-				while (!clientSocket.isClosed())
-				{
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			
+			/* TODO: move this code where you want to be receiving data */
+			while (!clientSocket.isClosed())
+			{
+				try {
 					char line = 'a';
-					if (is.available() != 0)
-					{
-						line = is.readChar();
-					}
+					line = is.readChar();
 					
 					if (line == 'i')
 					{
-						System.out.println("server read request to initialize chunk");
 						newInitializeChunk();
 					}
 					else if (line == 'p')
 					{
-						System.out.println("server read request to put chunk");
 						String ChunkHandle = is.readUTF();
 						int payloadSize = is.readInt();
 						byte[] buffer = new byte[payloadSize];
@@ -107,18 +100,15 @@ public class ChunkServer implements ChunkServerInterface {
 					}
 					else if (line == 'g')
 					{
-						System.out.println("server read request to get chunk");
 						String ChunkHandle = is.readUTF();
 						int offset = is.readInt();
 						int NumberOfBytes = is.readInt();
 						newGetChunk(ChunkHandle, offset, NumberOfBytes);
 					}
+				} catch (IOException e) {
+					break;
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				System.out.println("connection closed");
-				e.printStackTrace();
-			}	
+			}
 		}
 	}
 
@@ -127,9 +117,6 @@ public class ChunkServer implements ChunkServerInterface {
 	 * in the file.
 	 */
 	public String initializeChunk() {
-//		System.out.println("createChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
-//		System.out.println("Returns null for now.\n");
-		
 		// send the handle through the output stream
 		// increment the counter
 		counter++;
@@ -140,9 +127,6 @@ public class ChunkServer implements ChunkServerInterface {
 	}
 	
 	public void newInitializeChunk() {
-//		System.out.println("createChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
-//		System.out.println("Returns null for now.\n");
-		
 		// send the handle through the output stream
 		try {
 			// increment the counter
@@ -152,7 +136,6 @@ public class ChunkServer implements ChunkServerInterface {
 			os.writeUTF(chunkHandle);
 			// flush the stream
 			os.flush();
-//			System.out.println("Sent chunkHandle: " + chunkHandle);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -164,16 +147,12 @@ public class ChunkServer implements ChunkServerInterface {
 	 * should be no greater than 4KB
 	 */
 	public boolean putChunk(String ChunkHandle, byte[] payload, int offset) {
-//		System.out.println("putChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
-//		System.out.println("Returns false for now.\n");
-		
 		String counterStr = Long.toString(counter);
 		// initialize a binary file with the counter as the filename
 		String fPath = filePath + "/" + counterStr + ".bin";
 		File myFile = new File(fPath);
 		
 		if (payload.length > ChunkServer.ChunkSize) {
-//			System.out.println("The chunk size is greater than 4KB!");
 			return false;
 		}
 		
@@ -197,18 +176,13 @@ public class ChunkServer implements ChunkServerInterface {
 	}
 	
 	public void newPutChunk(String ChunkHandle, byte[] payload, int offset) {
-//		System.out.println("putChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
-//		System.out.println("Returns false for now.\n");
-		
 		String counterStr = Long.toString(counter);
 		// initialize a binary file with the counter as the filename
 		String fPath = filePath + "/" + counterStr + ".bin";
-//		File myFile = new File(fPath);
 		
 		try {
 			if (payload.length > ChunkServer.ChunkSize) {
 				os.writeBoolean(false);
-//				System.out.println("server wrote false");
 				os.flush();
 			}
 
@@ -218,7 +192,6 @@ public class ChunkServer implements ChunkServerInterface {
 			raf.close();
 
 			os.writeBoolean(true);
-//			System.out.println("server wrote true");
 			os.flush();
 			
 		} catch (IOException e) {
@@ -231,9 +204,6 @@ public class ChunkServer implements ChunkServerInterface {
 	 * read the chunk at the specific offset
 	 */
 	public byte[] getChunk(String ChunkHandle, int offset, int NumberOfBytes) {
-//		System.out.println("readChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
-//		System.out.println("Returns null for now.\n");
-		
 		// initialize a binary file with the counter as the filename
 		String fPath = filePath + "/" + ChunkHandle + ".bin";
 		File myFile = new File(fPath);
@@ -258,9 +228,6 @@ public class ChunkServer implements ChunkServerInterface {
 	}
 	
 	public void newGetChunk(String ChunkHandle, int offset, int NumberOfBytes) {
-//		System.out.println("readChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
-//		System.out.println("Returns null for now.\n");
-		
 		try {
 			// initialize a binary file with the counter as the filename
 			String fPath = filePath + "/" + ChunkHandle + ".bin";
@@ -276,7 +243,6 @@ public class ChunkServer implements ChunkServerInterface {
 			int numBytes = raf.read(data, 0, NumberOfBytes);
 			raf.close();
 
-//			System.out.println("numBytes in newGetChunk: " + numBytes);
 			/* this is the part where you write the number of bytes in the file in the first byte and then write the array */
 			// first write the number of bytes
 			os.writeInt(numBytes);
@@ -296,15 +262,5 @@ public class ChunkServer implements ChunkServerInterface {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ChunkServer chunkServer = new ChunkServer();
-		
-		/* clean up */
-//		try {
-//			chunkServer.os.close();
-//			chunkServer.is.close();
-//			chunkServer.clientSocket.close();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}
 }

@@ -61,23 +61,18 @@ public class Client implements ClientInterface {
 		try {
 			if (clientSocket != null && os != null && is != null) {
 				os.writeChar('i');
-				System.out.println("client requested server to initialize chunk");
 			}
 			
 			String responseLine = is.readUTF();
 			// this should capture the chunk handle
-			System.out.println("client read something from server in intializeChunk: " + responseLine);
-			
 			return responseLine;	
 			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} 
-		
+		} 		
 		
 		return "";
-//		return cs.initializeChunk();
 	}
 
 	/**
@@ -97,12 +92,10 @@ public class Client implements ClientInterface {
 				os.writeInt(payload.length);
 				os.write(payload);
 				os.writeInt(offset);
-				System.out.println("client requested server to putChunk");
 			}
 			
 			// read the response from the server
 			boolean response = is.readBoolean();
-			System.out.println("client read something from server in putChunk: " + response);
 			return response;
 			
 		} catch (IOException e) {
@@ -111,7 +104,6 @@ public class Client implements ClientInterface {
 		}
 		
 		return false;
-//		return cs.putChunk(ChunkHandle, payload, offset);
 	}
 
 	/**
@@ -132,14 +124,11 @@ public class Client implements ClientInterface {
 				os.writeUTF(ChunkHandle);
 				os.writeInt(offset);
 				os.writeInt(NumberOfBytes);
-				System.out.println("client requested server to getChunk");
 			}
 				
 			int numBytes = is.readInt();
-//			System.out.println("numBytes read from the server: " + numBytes);
 			byte[] buffer = new byte[numBytes];
 			int bytesRead = is.read(buffer);
-//			System.out.println("number of bytes actually read from the server: " + bytesRead);
 			return buffer;
 			
 		} catch (IOException e) {
@@ -147,7 +136,6 @@ public class Client implements ClientInterface {
 			e.printStackTrace();
 		}
 		
-		// return cs.getChunk(ChunkHandle, offset, NumberOfBytes);
 		return null;
 	}
 	

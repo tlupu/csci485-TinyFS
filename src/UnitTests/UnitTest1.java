@@ -25,7 +25,6 @@ public class UnitTest1 {
 	}
 
 	public static void test1() {
-		System.out.println("running unit test 1");
 		// Write the chunk and the byte array
 		byte[] payload = new byte[ChunkServer.ChunkSize];
 		int intSize = Integer.SIZE / Byte.SIZE; // 4 bytes
@@ -42,7 +41,6 @@ public class UnitTest1 {
 		if (client == null)
 		{
 			client = new Client();
-			System.out.println("new client initialized");
 		}
 		
 		handle = client.initializeChunk();
@@ -57,7 +55,5 @@ public class UnitTest1 {
 		} else {
 			System.out.println("Unit test 1 result: fail!");			
 		}
-		
-		client.closeClient();
 	}
 }

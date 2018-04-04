@@ -21,17 +21,14 @@ public class UnitTest2 {
 	 */
 
 	public static void main(String[] args) {
-		System.out.println("running unit test 2");
 		UnitTest1 ut1 = new UnitTest1();
 		ut1.test1();
 		if (ut1.client != null)
 		{
-			System.out.println("ut1 client is not null, assign it to client");
 			client = ut1.client;
 		}
 		else
 		{
-			System.out.println("ut1 client is null, initialize a new client");
 			client = new Client();		
 		}
 		String handle = ut1.handle;
@@ -50,6 +47,6 @@ public class UnitTest2 {
 		}
 		System.out.println("Unit test 2 result: success!");
 		
-//		client.closeClient();
+		client.closeClient();
 	}
 }

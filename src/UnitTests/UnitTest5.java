@@ -72,7 +72,7 @@ public class UnitTest5 {
 			System.out.println("Unit test 5 result: fail!");
 		}
 		
-//		client.closeClient();
+		client.closeClient();
 	}
 
 }
