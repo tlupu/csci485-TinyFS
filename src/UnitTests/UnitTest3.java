@@ -14,6 +14,8 @@ import com.client.Client;
  */
 
 public class UnitTest3 {
+	
+	static Client client = null;
 
 	/**
 	 * This unit test creates 1000 chunks 
@@ -27,8 +29,12 @@ public class UnitTest3 {
 
 	public static void main(String[] args) {
 		String ChunkHandle;
-
-		Client client = new Client();
+		if (client == null)
+		{
+			client = new Client();
+		}
+		
+		System.out.println("new client initialized");
 		// Write the chunk and the byte array
 		int intSize = Integer.SIZE / Byte.SIZE; // 4 bytes
 		int num = ChunkServer.ChunkSize / intSize; // 1024 integers

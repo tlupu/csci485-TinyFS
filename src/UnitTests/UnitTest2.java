@@ -30,6 +30,7 @@ public class UnitTest2 {
 		else
 		{
 			client = new Client();
+			System.out.println("new client initialized");
 		}
 		String handle = ut1.handle;
 		byte[] ValInBytes = ByteBuffer.allocate(4).putInt(1).array();

@@ -41,6 +41,7 @@ public class UnitTest1 {
 		if (client == null)
 		{
 			client = new Client();
+			System.out.println("new client initialized");
 		}
 		
 		handle = client.initializeChunk();

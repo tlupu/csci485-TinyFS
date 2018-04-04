@@ -87,12 +87,11 @@ public class ChunkServer implements ChunkServerInterface {
 				
 				if (line == 'i')
 				{
-					System.out.println("server read request to initialize chunk");
 					newInitializeChunk();
 				}
 				else if (line == 'p')
 				{
-					System.out.println("server read request to put chunk");
+//					System.out.println("server read request to put chunk");
 					String ChunkHandle = is.readUTF();
 					int payloadSize = is.readInt();
 					byte[] buffer = new byte[payloadSize];
@@ -103,7 +102,7 @@ public class ChunkServer implements ChunkServerInterface {
 				}
 				else if (line == 'g')
 				{
-					System.out.println("server read request to get chunk");
+//					System.out.println("server read request to get chunk");
 					String ChunkHandle = is.readUTF();
 					int offset = is.readInt();
 					int NumberOfBytes = is.readInt();
@@ -153,7 +152,7 @@ public class ChunkServer implements ChunkServerInterface {
 			os.writeUTF(chunkHandle);
 			// flush the stream
 			os.flush();
-			System.out.println("Sent chunkHandle: " + chunkHandle);
+//			System.out.println("Sent chunkHandle: " + chunkHandle);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -209,22 +208,17 @@ public class ChunkServer implements ChunkServerInterface {
 		try {
 			if (payload.length > ChunkServer.ChunkSize) {
 				os.writeBoolean(false);
-				System.out.println("server wrote false");
+//				System.out.println("server wrote false");
 				os.flush();
 			}
-			
-//			FileOutputStream fos;
-//			fos = new FileOutputStream(myFile);
-//			fos.write(payload, offset, payload.length);
-//			fos.close();
-			
+
 			RandomAccessFile raf = new RandomAccessFile(fPath, "rw");
 			raf.seek(offset);
 			raf.write(payload, 0, payload.length);
 			raf.close();
 
 			os.writeBoolean(true);
-			System.out.println("server wrote true");
+//			System.out.println("server wrote true");
 			os.flush();
 			
 		} catch (IOException e) {
@@ -282,7 +276,7 @@ public class ChunkServer implements ChunkServerInterface {
 			int numBytes = raf.read(data, 0, NumberOfBytes);
 			raf.close();
 
-			System.out.println("numBytes in newGetChunk: " + numBytes);
+//			System.out.println("numBytes in newGetChunk: " + numBytes);
 			/* this is the part where you write the number of bytes in the file in the first byte and then write the array */
 			// first write the number of bytes
 			os.writeInt(numBytes);
