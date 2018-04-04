@@ -21,7 +21,7 @@ import com.interfaces.ClientInterface;
  */
 public class Client implements ClientInterface {
 	public static ChunkServer cs = null;
-	Socket clientSocket;
+	public Socket clientSocket;
 	public DataOutputStream os;
     public DataInputStream is;
     String hostname = "localhost";
@@ -61,12 +61,12 @@ public class Client implements ClientInterface {
 		try {
 			if (clientSocket != null && os != null && is != null) {
 				os.writeChar('i');
-//				System.out.println("client requested server to initialize chunk");
+				System.out.println("client requested server to initialize chunk");
 			}
 			
 			String responseLine = is.readUTF();
 			// this should capture the chunk handle
-//			System.out.println("client read something from server in intializeChunk: " + responseLine);
+			System.out.println("client read something from server in intializeChunk: " + responseLine);
 			
 			return responseLine;	
 			
@@ -97,12 +97,12 @@ public class Client implements ClientInterface {
 				os.writeInt(payload.length);
 				os.write(payload);
 				os.writeInt(offset);
-//				System.out.println("client requested server to putChunk");
+				System.out.println("client requested server to putChunk");
 			}
 			
 			// read the response from the server
 			boolean response = is.readBoolean();
-//			System.out.println("client read something from server in putChunk: " + response);
+			System.out.println("client read something from server in putChunk: " + response);
 			return response;
 			
 		} catch (IOException e) {
@@ -132,7 +132,7 @@ public class Client implements ClientInterface {
 				os.writeUTF(ChunkHandle);
 				os.writeInt(offset);
 				os.writeInt(NumberOfBytes);
-//				System.out.println("client requested server to putChunk");
+				System.out.println("client requested server to getChunk");
 			}
 				
 			int numBytes = is.readInt();
@@ -150,5 +150,17 @@ public class Client implements ClientInterface {
 		// return cs.getChunk(ChunkHandle, offset, NumberOfBytes);
 		return null;
 	}
-
+	
+	public void closeClient()
+	{
+		try {
+			is.close();
+			os.close();
+			clientSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Issues closing the client");
+			e.printStackTrace();
+		}
+	}
 }

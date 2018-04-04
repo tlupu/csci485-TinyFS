@@ -32,6 +32,8 @@ public class UnitTest4 {
 		} else {
 			System.out.println("Unit test 4 result: fail!");
 		}
+		
+//		trw.client.closeClient();
 	}
 
 }

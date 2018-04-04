@@ -45,19 +45,6 @@ public class ChunkServer implements ChunkServerInterface {
 //				"Constructor of ChunkServer is invoked:  Part 1 of TinyFS must implement the body of this method.");
 //		System.out.println("It does nothing for now.\n");
 		
-		Socket clientSocket = null;
-		// Try to open a server socket on port 9898
-		try {
-			serverSocket = new ServerSocket(9893);
-			System.out.println("initialized server socket");
-			clientSocket = serverSocket.accept();
-			System.out.println("accepted server/client connection");
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		/* initialize the counter that keeps track of the chunkhandle 
 		   counter should start from the number of files that already exist */
 		File directory = new File(filePath);
@@ -71,54 +58,67 @@ public class ChunkServer implements ChunkServerInterface {
 			counter = 0;
 		}
 		
+		Socket clientSocket = null;
+		// Try to open a server socket on port 9898
 		try {
-			is = new DataInputStream(clientSocket.getInputStream());
-			os = new DataOutputStream(clientSocket.getOutputStream());
-			ps = new PrintStream(clientSocket.getOutputStream());
-			
-			/* TODO: move this code where you want to be receiving data */
-			while (true)
-			{
-				char line = 'a';
-				if (is.available() != 0)
-				{
-					line = is.readChar();
-				}
-				
-				if (line == 'i')
-				{
-					newInitializeChunk();
-				}
-				else if (line == 'p')
-				{
-//					System.out.println("server read request to put chunk");
-					String ChunkHandle = is.readUTF();
-					int payloadSize = is.readInt();
-					byte[] buffer = new byte[payloadSize];
-					// read data into buffer
-					is.read(buffer);
-					int offset = is.readInt();
-					newPutChunk(ChunkHandle, buffer, offset);
-				}
-				else if (line == 'g')
-				{
-//					System.out.println("server read request to get chunk");
-					String ChunkHandle = is.readUTF();
-					int offset = is.readInt();
-					int NumberOfBytes = is.readInt();
-					newGetChunk(ChunkHandle, offset, NumberOfBytes);
-				}
-			}
-			
+			serverSocket = new ServerSocket(9893);
+			System.out.println("initialized server socket");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (SecurityException e) {
-			System.out.println("SecurityException: if a security manager exists and its checkAccept method doesn't allow the operation");
-			e.printStackTrace();
-		} catch (IllegalBlockingModeException e) {
-			System.out.println("IllegalBlockingModeException: if this socket has an associated channel, the channel is in non-blocking mode, and there is no connection ready to be accepted");
-			e.printStackTrace();
+		}
+		
+		boolean done = false;
+		
+		while (!done)
+		{
+			try {
+				clientSocket = serverSocket.accept();
+				System.out.println("accepted server/client connection");
+				
+				is = new DataInputStream(clientSocket.getInputStream());
+				os = new DataOutputStream(clientSocket.getOutputStream());
+				ps = new PrintStream(clientSocket.getOutputStream());
+				
+				/* TODO: move this code where you want to be receiving data */
+				while (!clientSocket.isClosed())
+				{
+					char line = 'a';
+					if (is.available() != 0)
+					{
+						line = is.readChar();
+					}
+					
+					if (line == 'i')
+					{
+						System.out.println("server read request to initialize chunk");
+						newInitializeChunk();
+					}
+					else if (line == 'p')
+					{
+						System.out.println("server read request to put chunk");
+						String ChunkHandle = is.readUTF();
+						int payloadSize = is.readInt();
+						byte[] buffer = new byte[payloadSize];
+						// read data into buffer
+						is.read(buffer);
+						int offset = is.readInt();
+						newPutChunk(ChunkHandle, buffer, offset);
+					}
+					else if (line == 'g')
+					{
+						System.out.println("server read request to get chunk");
+						String ChunkHandle = is.readUTF();
+						int offset = is.readInt();
+						int NumberOfBytes = is.readInt();
+						newGetChunk(ChunkHandle, offset, NumberOfBytes);
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println("connection closed");
+				e.printStackTrace();
+			}	
 		}
 	}
 
