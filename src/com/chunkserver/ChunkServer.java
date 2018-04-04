@@ -52,6 +52,7 @@ public class ChunkServer implements ChunkServerInterface {
 			System.out.println("initialized server socket");
 			clientSocket = serverSocket.accept();
 			System.out.println("accepted server/client connection");
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -266,25 +267,28 @@ public class ChunkServer implements ChunkServerInterface {
 //		System.out.println("readChunk invoked:  Part 1 of TinyFS must implement the body of this method.");
 //		System.out.println("Returns null for now.\n");
 		
-		// initialize a binary file with the counter as the filename
-		String fPath = filePath + "/" + ChunkHandle + ".bin";
-		File myFile = new File(fPath);
-
-		FileInputStream fin = null;
-		byte fileContent[] = null;
 		try {
-			// create FileInputStream object
-			fin = new FileInputStream(myFile);
-			fileContent = new byte[(int)myFile.length()];
-			// Reads up to certain bytes of data from this input stream into an array of bytes.
-			int numBytes = fin.read(fileContent);
+			// initialize a binary file with the counter as the filename
+			String fPath = filePath + "/" + ChunkHandle + ".bin";
+			boolean exists = (new File(fPath)).exists();
+			if (exists == false)
+			{
+				os.write(null);
+			}
+			
+			byte[] data = new byte[NumberOfBytes];
+			RandomAccessFile raf = new RandomAccessFile(fPath, "rw");
+			raf.seek(offset);
+			int numBytes = raf.read(data, 0, NumberOfBytes);
+			raf.close();
+
 			System.out.println("numBytes in newGetChunk: " + numBytes);
 			/* this is the part where you write the number of bytes in the file in the first byte and then write the array */
 			// first write the number of bytes
 			os.writeInt(numBytes);
 			os.flush();
 			// then write the bytes array
-			os.write(fileContent);
+			os.write(data);
 			os.flush();
 		}
 		catch (FileNotFoundException e) {
